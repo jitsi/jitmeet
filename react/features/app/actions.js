@@ -2,6 +2,7 @@
 
 import type { Dispatch } from 'redux';
 
+import { appWillNavigate } from '../base/app';
 import { setRoom } from '../base/conference';
 import {
     configWillLoad,
@@ -58,6 +59,9 @@ export function appNavigate(uri: ?string) {
         const { contextRoot, host, room } = location;
         const locationURL = new URL(location.toString());
 
+        // XXX this looks like CONFIG_WILL_LOAD ?
+        dispatch(appWillNavigate(locationURL, room));
+
         dispatch(configWillLoad(locationURL, room));
 
         let protocol = location.protocol.toLowerCase();
@@ -81,7 +85,7 @@ export function appNavigate(uri: ?string) {
             config = restoreConfig(baseURL);
 
             if (!config) {
-                dispatch(loadConfigError(error, locationURL));
+                dispatch(loadConfigError(error, locationURL, room));
 
                 return;
             }
@@ -92,7 +96,7 @@ export function appNavigate(uri: ?string) {
             dispatch(setConfig(config));
             dispatch(setRoom(room));
         } else {
-            dispatch(loadConfigError(new Error('Config no longer needed!'), locationURL));
+            dispatch(loadConfigError(new Error('Config no longer needed!'), locationURL, room));
         }
     };
 }
