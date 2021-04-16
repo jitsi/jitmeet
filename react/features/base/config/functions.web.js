@@ -44,3 +44,14 @@ export function getToolbarButtons(state: Object): Array<string> {
 
     return Array.isArray(toolbarButtons) ? toolbarButtons : TOOLBAR_BUTTONS;
 }
+
+/**
+ * Returns whether audio level measurement is enabled or not.
+ *
+ * @param {Object} state - The state of the app.
+ * @returns {boolean}
+ */
+export function areAudioLevelsEnabled(state: Object): boolean {
+    // Default to false for React Native as audio levels are of no interest to the mobile app.
+    return navigator.product !== 'ReactNative' && !state['features/base/config'].disableAudioLevels;
+}
