@@ -49,9 +49,7 @@ import {
     open as openParticipantsPane
 } from '../../../participants-pane/actions';
 import { getParticipantsPaneOpen } from '../../../participants-pane/functions';
-import {
-    PollCreateButton
-} from '../../../polls/components';
+import { PollCreateButton } from '../../../polls/components/';
 import {
     LiveStreamButton,
     RecordButton
