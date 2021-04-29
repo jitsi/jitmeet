@@ -1,6 +1,6 @@
 // @flow
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { View } from 'react-native';
 import type { Dispatch } from 'redux';
 
@@ -31,6 +31,8 @@ import RaisedHandIndicator from './RaisedHandIndicator';
 import ScreenShareIndicator from './ScreenShareIndicator';
 import VideoMutedIndicator from './VideoMutedIndicator';
 import styles, { AVATAR_SIZE } from './styles';
+
+declare var APP: Object;
 
 /**
  * Thumbnail component's property types.
@@ -136,7 +138,24 @@ function Thumbnail(props: Props) {
     const participantInLargeVideo
         = participantId === largeVideo.participantId;
     const videoMuted = !videoTrack || videoTrack.muted;
-    const isScreenShare = videoTrack && videoTrack.videoType === VIDEO_TYPE.DESKTOP;
+    const isScreenShare = videoTrack && videoTrack.videoType === VIDEO_TYPE.DESKTOP;,
+    const [raisedFirst, setRaisedFirst] = useState(undefined);
+
+    useEffect(() => {
+        const updateFirst = setInterval(() => {
+            const first = APP.store.getState()['features/base/participants'].filter((p) => p && p.raisedHandAt).sort((a, b) => {
+                if (a.raisedHandAt < b.raisedHandAt) {
+                    return -1;
+                }
+                if (a.raisedHandAt > b.raisedHandAt) {
+                    return 1;
+                }
+                return 0;
+            })[0];
+
+            setRaisedFirst(first);
+        }, 1000);
+    }, []);
 
     return (
         <Container
@@ -173,7 +192,7 @@ function Thumbnail(props: Props) {
                     styles.thumbnailTopIndicatorContainer,
                     styles.thumbnailTopLeftIndicatorContainer
                 ] }>
-                <RaisedHandIndicator participantId = { participant.id } />
+                <RaisedHandIndicator participantId = { participant.id } first = { raisedFirst && raisedFirst.id === id && raisedFirst.raisedHandAt } />
                 { renderDominantSpeakerIndicator && <DominantSpeakerIndicator /> }
             </View> }
 
