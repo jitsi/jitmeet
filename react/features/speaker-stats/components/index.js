@@ -1,1 +1,1 @@
-export { default as SpeakerStats } from './SpeakerStats';
+export { default as StatsDialog } from "./StatsDialog";

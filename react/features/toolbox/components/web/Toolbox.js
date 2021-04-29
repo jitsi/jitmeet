@@ -59,7 +59,7 @@ import {
     openSettingsDialog
 } from '../../../settings';
 import { SharedVideoButton } from '../../../shared-video/components';
-import { SpeakerStats } from '../../../speaker-stats';
+import { StatsDialog } from '../../../speaker-stats';
 import {
     ClosedCaptionButton
 } from '../../../subtitles';
@@ -255,7 +255,7 @@ class Toolbox extends Component<Props> {
         this._onToolbarOpenFeedback = this._onToolbarOpenFeedback.bind(this);
         this._onToolbarToggleParticipantsPane = this._onToolbarToggleParticipantsPane.bind(this);
         this._onToolbarOpenKeyboardShortcuts = this._onToolbarOpenKeyboardShortcuts.bind(this);
-        this._onToolbarOpenSpeakerStats = this._onToolbarOpenSpeakerStats.bind(this);
+        this._onToolbarOpenStatsDialog = this._onToolbarOpenStatsDialog.bind(this);
         this._onToolbarOpenEmbedMeeting = this._onToolbarOpenEmbedMeeting.bind(this);
         this._onToolbarOpenVideoQuality = this._onToolbarOpenVideoQuality.bind(this);
         this._onToolbarToggleChat = this._onToolbarToggleChat.bind(this);
@@ -422,13 +422,13 @@ class Toolbox extends Component<Props> {
     }
 
     /**
-     * Callback invoked to display {@code SpeakerStats}.
+     * Callback invoked to display {@code StatsDialog}.
      *
      * @private
      * @returns {void}
      */
-    _doOpenSpeakerStats() {
-        this.props.dispatch(openDialog(SpeakerStats, {
+    _doOpenStatsDialog() {
+        this.props.dispatch(openDialog(StatsDialog, {
             conference: this.props._conference
         }));
     }
@@ -494,7 +494,8 @@ class Toolbox extends Component<Props> {
 
             id: _localParticipantID,
             local: true,
-            raisedHand: newRaisedStatus
+            raisedHand: newRaisedStatus,
+            raisedHandAt: newRaisedStatus ? Date.now() : 0
         }));
 
         APP.API.notifyRaiseHandUpdated(_localParticipantID, newRaisedStatus);
@@ -775,7 +776,7 @@ class Toolbox extends Component<Props> {
         this._doOpenEmbedMeeting();
     }
 
-    _onToolbarOpenSpeakerStats: () => void;
+    _onToolbarOpenStatsDialog: () => void;
 
     /**
      * Creates an analytics toolbar event and dispatches an action for opening
@@ -784,10 +785,10 @@ class Toolbox extends Component<Props> {
      * @private
      * @returns {void}
      */
-    _onToolbarOpenSpeakerStats() {
+    _onToolbarOpenStatsDialog() {
         sendAnalytics(createToolbarEvent('speaker.stats'));
 
-        this._doOpenSpeakerStats();
+        this._doOpenStatsDialog();
     }
 
     _onToolbarOpenVideoQuality: () => void;
@@ -1060,7 +1061,7 @@ class Toolbox extends Component<Props> {
                     accessibilityLabel = { t('toolbar.accessibilityLabel.speakerStats') }
                     icon = { IconPresentation }
                     key = 'stats'
-                    onClick = { this._onToolbarOpenSpeakerStats }
+                    onClick = { this._onToolbarOpenStatsDialog }
                     text = { t('toolbar.speakerStats') } />
         ];
 

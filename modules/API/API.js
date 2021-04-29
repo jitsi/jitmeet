@@ -204,7 +204,8 @@ function initCommands() {
                 participantUpdated({
                     id: APP.conference.getMyUserId(),
                     local: true,
-                    raisedHand: !raisedHand
+                    raisedHand: !raisedHand,
+                    raisedHandAt: !raisedHand ? Date.now() : 0
                 })
             );
         },

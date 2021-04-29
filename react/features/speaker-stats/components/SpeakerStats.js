@@ -1,14 +1,13 @@
 // @flow
 
-import React, { Component } from 'react';
+import React, { Component } from "react";
 
-import { Dialog } from '../../base/dialog';
-import { translate } from '../../base/i18n';
-import { getLocalParticipant } from '../../base/participants';
-import { connect } from '../../base/redux';
+import { translate } from "../../base/i18n";
+import { getLocalParticipant } from "../../base/participants";
+import { connect, toState } from "../../base/redux";
 
-import SpeakerStatsItem from './SpeakerStatsItem';
-import SpeakerStatsLabels from './SpeakerStatsLabels';
+import SpeakerStatsItem from "./SpeakerStatsItem";
+import SpeakerStatsLabels from "./SpeakerStatsLabels";
 
 declare var interfaceConfig: Object;
 
@@ -16,7 +15,6 @@ declare var interfaceConfig: Object;
  * The type of the React {@code Component} props of {@link SpeakerStats}.
  */
 type Props = {
-
     /**
      * The display name for the local participant obtained from the redux store.
      */
@@ -30,18 +28,17 @@ type Props = {
     /**
      * The function to translate human-readable text.
      */
-    t: Function
+    t: Function,
 };
 
 /**
  * The type of the React {@code Component} state of {@link SpeakerStats}.
  */
 type State = {
-
     /**
      * The stats summary provided by the JitsiConference.
      */
-    stats: Object
+    stats: Object,
 };
 
 /**
@@ -62,7 +59,7 @@ class SpeakerStats extends Component<Props, State> {
         super(props);
 
         this.state = {
-            stats: this.props.conference.getSpeakerStats()
+            stats: this.props.conference.getSpeakerStats(),
         };
 
         // Bind event handlers so they are only bound once per instance.
@@ -96,18 +93,13 @@ class SpeakerStats extends Component<Props, State> {
      */
     render() {
         const userIds = Object.keys(this.state.stats);
-        const items = userIds.map(userId => this._createStatsItem(userId));
+        const items = userIds.map((userId) => this._createStatsItem(userId));
 
         return (
-            <Dialog
-                cancelKey = { 'dialog.close' }
-                submitDisabled = { true }
-                titleKey = 'speakerStats.speakerStats'>
-                <div className = 'speaker-stats'>
-                    <SpeakerStatsLabels />
-                    { items }
-                </div>
-            </Dialog>
+            <div className="speaker-stats">
+                <SpeakerStatsLabels />
+                {items}
+            </div>
         );
     }
 
@@ -134,24 +126,26 @@ class SpeakerStats extends Component<Props, State> {
 
         if (statsModel.isLocalStats()) {
             const { t } = this.props;
-            const meString = t('me');
+            const meString = t("me");
 
             displayName = this.props._localDisplayName;
-            displayName
-                = displayName ? `${displayName} (${meString})` : meString;
+            displayName = displayName
+                ? `${displayName} (${meString})`
+                : meString;
         } else {
-            displayName
-                = this.state.stats[userId].getDisplayName()
-                    || interfaceConfig.DEFAULT_REMOTE_DISPLAY_NAME;
+            displayName =
+                this.state.stats[userId].getDisplayName() ||
+                interfaceConfig.DEFAULT_REMOTE_DISPLAY_NAME;
         }
 
         return (
             <SpeakerStatsItem
-                displayName = { displayName }
-                dominantSpeakerTime = { dominantSpeakerTime }
-                hasLeft = { hasLeft }
-                isDominantSpeaker = { isDominantSpeaker }
-                key = { userId } />
+                displayName={displayName}
+                dominantSpeakerTime={dominantSpeakerTime}
+                hasLeft={hasLeft}
+                isDominantSpeaker={isDominantSpeaker}
+                key={userId}
+            />
         );
     }
 
@@ -189,7 +183,7 @@ function _mapStateToProps(state) {
          * @private
          * @type {string|undefined}
          */
-        _localDisplayName: localParticipant && localParticipant.name
+        _localDisplayName: localParticipant && localParticipant.name,
     };
 }
 
