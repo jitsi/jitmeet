@@ -12,6 +12,11 @@ import { ParticipantActionEllipsis } from './styled';
 type Props = {
 
     /**
+     * Boolean to check if is the first who raised hand.
+     */
+    isFirst: Boolean,
+
+    /**
      * Is this item highlighted
      */
     isHighlighted: boolean,
@@ -33,6 +38,7 @@ type Props = {
 };
 
 export const MeetingParticipantItem = ({
+    isFirst,
     isHighlighted,
     onContextMenu,
     onLeave,
@@ -45,6 +51,7 @@ export const MeetingParticipantItem = ({
         <ParticipantItem
             actionsTrigger = { ActionTrigger.Hover }
             audioMuteState = { isAudioMuted ? MediaState.Muted : MediaState.Unmuted }
+            isFirst = { isFirst }
             isHighlighted = { isHighlighted }
             onLeave = { onLeave }
             participant = { participant }

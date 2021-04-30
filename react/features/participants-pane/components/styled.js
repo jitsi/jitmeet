@@ -314,6 +314,14 @@ export const RaisedHandIndicatorBackground = styled.div`
   width: 24px;
 `;
 
+
+export const FirstRaisedHandIndicatorBackground = styled.div`
+  background-color: #e9001b;
+  border-radius: 3px;
+  height: 24px;
+  width: 24px;
+`;
+
 export const VolumeInput = styled.input.attrs({
     type: 'range'
 })`

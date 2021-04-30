@@ -1,6 +1,6 @@
 // @flow
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { View } from 'react-native';
 import type { Dispatch } from 'redux';
 
@@ -17,6 +17,7 @@ import {
 import { Container } from '../../../base/react';
 import { connect } from '../../../base/redux';
 import { StyleType } from '../../../base/styles';
+import { getParticipants } from "../../../base/participants";
 import { getTrackByMediaTypeAndParticipant } from '../../../base/tracks';
 import { ConnectionIndicator } from '../../../connection-indicator';
 import { DisplayNameLabel } from '../../../display-name';
@@ -95,6 +96,11 @@ type Props = {
     participant: Object,
 
     /**
+     * The Redux representation of the participant to display.
+     */
+     participants: Object[],
+
+    /**
      * Whether to display or hide the display name of the participant in the thumbnail.
      */
     renderDisplayName: ?boolean,
@@ -136,7 +142,26 @@ function Thumbnail(props: Props) {
     const participantInLargeVideo
         = participantId === largeVideo.participantId;
     const videoMuted = !videoTrack || videoTrack.muted;
-    const isScreenShare = videoTrack && videoTrack.videoType === VIDEO_TYPE.DESKTOP;
+    const isScreenShare = videoTrack && videoTrack.videoType === VIDEO_TYPE.DESKTOP;,
+    const [raisedFirst, setRaisedFirst] = useState(undefined);
+
+    useEffect(() => {
+        const updateFirst = setInterval(() => {
+            const first = props._participants.filter((p) => p && p.raisedHandAt).sort((a, b) => {
+                if (a.raisedHandAt < b.raisedHandAt) {
+                    return -1;
+                }
+                if (a.raisedHandAt > b.raisedHandAt) {
+                    return 1;
+                }
+                return 0;
+            })[0];
+
+            setRaisedFirst(first);
+        }, 1000);
+
+        return () => clearInterval(updateFirst);
+    }, []);
 
     return (
         <Container
@@ -173,7 +198,7 @@ function Thumbnail(props: Props) {
                     styles.thumbnailTopIndicatorContainer,
                     styles.thumbnailTopLeftIndicatorContainer
                 ] }>
-                <RaisedHandIndicator participantId = { participant.id } />
+                <RaisedHandIndicator participantId = { participant.id } first = { raisedFirst && raisedFirst.id === id && raisedFirst.raisedHandAt } />
                 { renderDominantSpeakerIndicator && <DominantSpeakerIndicator /> }
             </View> }
 
@@ -277,6 +302,7 @@ function _mapStateToProps(state, ownProps) {
         _renderDominantSpeakerIndicator: renderDominantSpeakerIndicator,
         _renderModeratorIndicator: renderModeratorIndicator,
         _styles: ColorSchemeRegistry.get(state, 'Thumbnail'),
+        _participants: getParticipants(state),
         _videoTrack: videoTrack
     };
 }

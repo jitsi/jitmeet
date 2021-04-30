@@ -384,6 +384,10 @@
   background: $raiseHandBg;
 }
 
+.raisehandindicatorfirst {
+  background: $presence-busy !important;
+}
+
 .connection-indicator {
     background: $connectionIndicatorBg;
 

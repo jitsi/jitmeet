@@ -179,6 +179,11 @@ export type Props = {|
     _participant: Object,
 
     /**
+     * An object with information about the participant related to the thumbnaul.
+     */
+     _participants: Object[],
+
+    /**
      * The number of participants in the call.
      */
     _participantCount: number,
@@ -227,6 +232,7 @@ function onClick(event) {
  * @extends Component
  */
 class Thumbnail extends Component<Props, State> {
+    _updateInterval: IntervalID;
     /**
      * Initializes a new Thumbnail instance.
      *
@@ -246,7 +252,8 @@ class Thumbnail extends Component<Props, State> {
 
         this.state = {
             ...state,
-            displayMode: computeDisplayMode(Thumbnail.getDisplayModeInput(props, state))
+            displayMode: computeDisplayMode(Thumbnail.getDisplayModeInput(props, state)),
+            raisedFirst: undefined
         };
 
         this._updateAudioLevel = this._updateAudioLevel.bind(this);
@@ -257,6 +264,7 @@ class Thumbnail extends Component<Props, State> {
         this._onMouseEnter = this._onMouseEnter.bind(this);
         this._onMouseLeave = this._onMouseLeave.bind(this);
         this._onTestingEvent = this._onTestingEvent.bind(this);
+        this._updateFirst = this._updateFirst.bind(this);
     }
 
     /**
@@ -268,6 +276,7 @@ class Thumbnail extends Component<Props, State> {
     componentDidMount() {
         this._listenForAudioUpdates();
         this._onDisplayModeChanged();
+        this._updateInterval = setInterval(this._updateFirst, 1000);
     }
 
     /**
@@ -402,6 +411,7 @@ class Thumbnail extends Component<Props, State> {
      */
     componentWillUnmount() {
         this._stopListeningForAudioUpdates(this.props._audioTrack);
+        clearInterval(this._updateInterval);
     }
 
     /**
@@ -574,6 +584,28 @@ class Thumbnail extends Component<Props, State> {
         );
     }
 
+    _updateFirst: () => void;
+
+    /**
+     * Update the internal state with the latest speaker stats.
+     *
+     * @returns {void}
+     * @private
+     */
+     _updateFirst() {
+        const raisedFirst = this.props._participants.filter((p) => p && p.raisedHandAt).sort((a, b) => {
+            if (a.raisedHandAt < b.raisedHandAt) {
+                return -1;
+            }
+            if (a.raisedHandAt > b.raisedHandAt) {
+                return 1;
+            }
+            return 0;
+        })[0];
+
+        this.setState({ raisedFirst });
+    }
+
     /**
      * Renders the top indicators of the thumbnail.
      *
@@ -589,7 +621,7 @@ class Thumbnail extends Component<Props, State> {
             _participant,
             _participantCount
         } = this.props;
-        const { isHovered } = this.state;
+        const { isHovered, raisedFirst } = this.state;
         const showConnectionIndicator = isHovered || !_connectionIndicatorAutoHideEnabled;
         const { id, local = false, dominantSpeaker = false } = _participant;
         const showDominantSpeaker = !_isDominantSpeakerDisabled && dominantSpeaker;
@@ -623,7 +655,8 @@ class Thumbnail extends Component<Props, State> {
                 <RaisedHandIndicator
                     iconSize = { iconSize }
                     participantId = { id }
-                    tooltipPosition = { tooltipPosition } />
+                    tooltipPosition = { tooltipPosition }
+                    first = { raisedFirst && raisedFirst.id === id && raisedFirst.raisedHandAt } />
                 { showDominantSpeaker && _participantCount > 2
                     && <DominantSpeakerIndicator
                         iconSize = { iconSize }
@@ -1023,6 +1056,7 @@ function _mapStateToProps(state, ownProps): Object {
         _indicatorIconSize: NORMAL,
         _localFlipX: Boolean(localFlipX),
         _participant: participant,
+        _participants: state['features/base/participants'],
         _participantCount: getParticipantCount(state),
         _startSilent: Boolean(startSilent),
         _videoTrack,

@@ -23,7 +23,12 @@ type Props = AbstractProps & {
     /**
      * From which side of the indicator the tooltip should appear from.
      */
-    tooltipPosition: string
+    tooltipPosition: string,
+
+    /**
+     * Boolean to check if is the first who raised hand.
+     */
+    first: Boolean
 };
 
 /**
@@ -40,7 +45,7 @@ class RaisedHandIndicator extends AbstractRaisedHandIndicator<Props> {
     _renderIndicator() {
         return (
             <BaseIndicator
-                className = 'raisehandindicator indicator show-inline'
+                className = { `${this.props.first ? 'raisehandindicatorfirst' : 'raisehandindicator'} indicator show-inline` }
                 icon = { IconRaisedHand }
                 iconClassName = 'indicatoricon'
                 iconSize = { `${this.props.iconSize}px` }

@@ -1,6 +1,6 @@
 // @flow
 
-import React, { type Node } from 'react';
+import React, { type Node, useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { Avatar } from '../../base/avatar';
@@ -14,6 +14,7 @@ import {
 import { ActionTrigger, MediaState } from '../constants';
 
 import { RaisedHandIndicator } from './RaisedHandIndicator';
+import TimeElapsed from '../../speaker-stats/components/TimeElapsed';
 import {
     ParticipantActionsHover,
     ParticipantActionsPermanent,
@@ -94,6 +95,11 @@ type Props = {
     children: Node,
 
     /**
+     * Boolean to check if is the first who raised hand.
+     */
+    isFirst: Boolean,
+
+    /**
      * Is this item highlighted/raised
      */
     isHighlighted?: boolean,
@@ -116,6 +122,7 @@ type Props = {
 
 export const ParticipantItem = ({
     children,
+    isFirst,
     isHighlighted,
     onLeave,
     actionsTrigger = ActionTrigger.Hover,
@@ -125,11 +132,23 @@ export const ParticipantItem = ({
 }: Props) => {
     const ParticipantActions = Actions[actionsTrigger];
     const { t } = useTranslation();
+    const [waitingTime, setWaitingTime] = useState(Date.now() - p.raisedHandAt);
+    const [showHandTime, setShowHandTime] = useState(false);
+
+    useEffect(() => {
+        const timeInterval = setInterval(() => {
+            const tm = p.raisedHandAt ? Date.now() - p.raisedHandAt : 0;
+            setWaitingTime(isNaN(tm) ? 0 : tm);
+        }, 1000);
+
+        return () => clearInterval(timeInterval);
+    }, [p]);
 
     return (
         <ParticipantContainer
             isHighlighted = { isHighlighted }
-            onMouseLeave = { onLeave }
+            onMouseLeave = { (e) => { onLeave(e); setShowHandTime(false); } }
+            onMouseEnter = { () => setShowHandTime(true) }
             trigger = { actionsTrigger }>
             <Avatar
                 className = 'participant-avatar'
@@ -144,7 +163,8 @@ export const ParticipantItem = ({
                 </ParticipantNameContainer>
                 { !p.local && <ParticipantActions children = { children } /> }
                 <ParticipantStates>
-                    {p.raisedHand && <RaisedHandIndicator />}
+                    {p.raisedHand && <RaisedHandIndicator isFirst = { isFirst } />}
+                    {showHandTime && p.raisedHandAt && <TimeElapsed time = { waitingTime } />}
                     {VideoStateIcons[videoMuteState]}
                     {AudioStateIcons[audioMuteState]}
                 </ParticipantStates>

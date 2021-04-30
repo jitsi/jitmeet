@@ -3,7 +3,7 @@
 import React, { Component } from "react";
 
 import { translate } from "../../base/i18n";
-import { getLocalParticipant } from "../../base/participants";
+import { getParticipants } from "../../base/participants";
 import { connect } from "../../base/redux";
 
 import SpeakerStatsItem from "./SpeakerStatsItem";
@@ -12,18 +12,19 @@ import SpeakerStatsLabels from "./SpeakerStatsLabels";
 declare var interfaceConfig: Object;
 
 /**
- * The type of the React {@code Component} props of {@link SpeakerStats}.
+ * The type of the React {@code Component} props of {@link RaiseHandStats}.
  */
 type Props = {
-    /**
-     * The display name for the local participant obtained from the redux store.
-     */
-    _localDisplayName: string,
 
     /**
      * The JitsiConference from which stats will be pulled.
      */
     conference: Object,
+
+    /**
+     * The JitsiConference from which stats will be pulled.
+     */
+    _participants: Object[],
 
     /**
      * The function to translate human-readable text.
@@ -32,13 +33,13 @@ type Props = {
 };
 
 /**
- * The type of the React {@code Component} state of {@link SpeakerStats}.
+ * The type of the React {@code Component} state of {@link RaiseHandStats}.
  */
 type State = {
     /**
-     * The stats summary provided by the JitsiConference.
+     * The stats summary provided by the Redux store.
      */
-    stats: Object,
+    participants: Object[]
 };
 
 /**
@@ -46,11 +47,11 @@ type State = {
  *
  * @extends Component
  */
-class SpeakerStats extends Component<Props, State> {
+class RaiseHandStats extends Component<Props, State> {
     _updateInterval: IntervalID;
 
     /**
-     * Initializes a new SpeakerStats instance.
+     * Initializes a new RaiseHandStats instance.
      *
      * @param {Object} props - The read-only React Component props with which
      * the new instance is to be initialized.
@@ -59,7 +60,7 @@ class SpeakerStats extends Component<Props, State> {
         super(props);
 
         this.state = {
-            stats: this.props.conference.getSpeakerStats(),
+            participants: props._participants
         };
 
         // Bind event handlers so they are only bound once per instance.
@@ -92,59 +93,53 @@ class SpeakerStats extends Component<Props, State> {
      * @returns {ReactElement}
      */
     render() {
-        const userIds = Object.keys(this.state.stats);
-        const items = userIds.map((userId) => this._createStatsItem(userId));
+        const items = this.state.participants.filter((p) => p.raisedHandAt).sort((a, b) => {
+            if (a.raisedHandAt < b.raisedHandAt) {
+                return -1;
+            }
+            if (a.raisedHandAt > b.raisedHandAt) {
+                return 1;
+            }
+            return 0;
+        }).map((p) => this._createStatsItem(p));
 
         return (
             <div className="speaker-stats">
-                <SpeakerStatsLabels />
+                <SpeakerStatsLabels raisedHand />
                 {items}
             </div>
         );
     }
 
     /**
-     * Create a SpeakerStatsItem instance for the passed in user id.
+     * Create a SpeakerStatsItem instance for the passed in participant.
      *
-     * @param {string} userId -  User id used to look up the associated
-     * speaker stats from the jitsi library.
+     * @param {object} participant -  Participant used to look up the associated
+     * speaker stats from the Redux store.
      * @returns {SpeakerStatsItem|null}
      * @private
      */
-    _createStatsItem(userId) {
-        const statsModel = this.state.stats[userId];
-
-        if (!statsModel) {
+    _createStatsItem(participant) {
+        if (!participant || !participant.raisedHandAt) {
             return null;
         }
 
-        const isDominantSpeaker = statsModel.isDominantSpeaker();
-        const dominantSpeakerTime = statsModel.getTotalDominantSpeakerTime();
-        const hasLeft = statsModel.hasLeft();
+        const { t } = this.props;
+        const meString = t("me");
 
-        let displayName;
-
-        if (statsModel.isLocalStats()) {
-            const { t } = this.props;
-            const meString = t("me");
-
-            displayName = this.props._localDisplayName;
-            displayName = displayName
-                ? `${displayName} (${meString})`
-                : meString;
-        } else {
-            displayName =
-                this.state.stats[userId].getDisplayName() ||
-                interfaceConfig.DEFAULT_REMOTE_DISPLAY_NAME;
+        let displayName = participant.name;
+        
+        if (participant.local) {
+            displayName = `${displayName} (${meString})`;
         }
 
         return (
             <SpeakerStatsItem
                 displayName={displayName}
-                dominantSpeakerTime={dominantSpeakerTime}
-                hasLeft={hasLeft}
-                isDominantSpeaker={isDominantSpeaker}
-                key={userId}
+                dominantSpeakerTime={(Date.now() - participant.raisedHandAt)}
+                hasLeft={false}
+                isDominantSpeaker={participant.dominantSpeaker}
+                key={participant.id}
             />
         );
     }
@@ -158,9 +153,9 @@ class SpeakerStats extends Component<Props, State> {
      * @private
      */
     _updateStats() {
-        const stats = this.props.conference.getSpeakerStats();
+        const participants = this.props._participants;
 
-        this.setState({ stats });
+        this.setState({ participants });
     }
 }
 
@@ -174,8 +169,6 @@ class SpeakerStats extends Component<Props, State> {
  * }}
  */
 function _mapStateToProps(state) {
-    const localParticipant = getLocalParticipant(state);
-
     return {
         /**
          * The local display name.
@@ -183,8 +176,8 @@ function _mapStateToProps(state) {
          * @private
          * @type {string|undefined}
          */
-        _localDisplayName: localParticipant && localParticipant.name,
+        _participants: getParticipants(state)
     };
 }
 
-export default translate(connect(_mapStateToProps)(SpeakerStats));
+export default translate(connect(_mapStateToProps)(RaiseHandStats));

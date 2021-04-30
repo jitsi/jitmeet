@@ -4,12 +4,30 @@ import React from 'react';
 
 import { Icon, IconRaisedHandHollow } from '../../base/icons';
 
-import { RaisedHandIndicatorBackground } from './styled';
+import { RaisedHandIndicatorBackground, FirstRaisedHandIndicatorBackground } from './styled';
 
-export const RaisedHandIndicator = () => (
-    <RaisedHandIndicatorBackground>
-        <Icon
-            size = { 15 }
-            src = { IconRaisedHandHollow } />
-    </RaisedHandIndicatorBackground>
-);
+type Props = {
+
+    /**
+     * Boolean to check if is the first who raised hand.
+     */
+    isFirst: Boolean
+}
+
+export const RaisedHandIndicator = ({ isFirst }: Props) => {
+    if (isFirst) {
+        return (
+            <FirstRaisedHandIndicatorBackground>
+                <Icon
+                    size = { 15 }
+                    src = { IconRaisedHandHollow } />
+            </FirstRaisedHandIndicatorBackground>)
+    }
+
+    return (
+        <RaisedHandIndicatorBackground>
+            <Icon
+                size = { 15 }
+                src = { IconRaisedHandHollow } />
+        </RaisedHandIndicatorBackground>)
+}

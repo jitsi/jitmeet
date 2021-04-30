@@ -20,6 +20,20 @@ export const LobbyParticipantList = () => {
         return null;
     }
 
+    const isFirstRaisedHand = (id) => {
+        const first = [...participants].filter((p) => p.raisedHandAt).sort((a, b) => {
+            if (a.raisedHandAt < b.raisedHandAt) {
+                return -1;
+            }
+            if (a.raisedHandAt > b.raisedHandAt) {
+                return 1;
+            }
+            return 0;
+        })[0];
+
+        return first && first.id === id;
+    };
+
     return (
     <>
         <Heading>{t('participantsPane.headings.lobby', { count: participants.length })}</Heading>
@@ -27,7 +41,8 @@ export const LobbyParticipantList = () => {
             {participants.map(p => (
                 <LobbyParticipantItem
                     key = { p.id }
-                    participant = { p } />)
+                    participant = { p }
+                    isFirst = { isFirstRaisedHand(p.id) } />)
             )}
         </div>
     </>

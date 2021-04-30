@@ -90,7 +90,8 @@ MiddlewareRegistry.register(store => next => action => {
                 conference,
                 id,
                 local: isLocal,
-                raisedHand: false
+                raisedHand: false,
+                raisedHandAt: 0
             }));
 
         break;
@@ -445,7 +446,8 @@ function _raiseHandUpdated({ dispatch, getState }, conference, participantId, ne
     dispatch(participantUpdated({
         conference,
         id: participantId,
-        raisedHand
+        raisedHand,
+        raisedHandAt: raisedHand ? Date.now() : 0
     }));
 
     if (typeof APP !== 'undefined') {
