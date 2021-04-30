@@ -13,12 +13,17 @@ import { ParticipantActionButton } from './styled';
 type Props = {
 
     /**
+     * Boolean to check if is the first who raised hand.
+     */
+    isFirst: Boolean,
+
+    /**
      * Participant reference
      */
     participant: Object
 };
 
-export const LobbyParticipantItem = ({ participant: p }: Props) => {
+export const LobbyParticipantItem = ({ participant: p, isFirst: isFirst }: Props) => {
     const dispatch = useDispatch();
     const admit = useCallback(() => dispatch(setKnockingParticipantApproval(p.id, true), [ dispatch ]));
     const reject = useCallback(() => dispatch(setKnockingParticipantApproval(p.id, false), [ dispatch ]));
@@ -29,7 +34,8 @@ export const LobbyParticipantItem = ({ participant: p }: Props) => {
             actionsTrigger = { ActionTrigger.Permanent }
             audioMuteState = { MediaState.None }
             participant = { p }
-            videoMuteState = { MediaState.None }>
+            videoMuteState = { MediaState.None }
+            isFirst = { true }>
             <ParticipantActionButton
                 onClick = { reject }>
                 {t('lobby.reject')}

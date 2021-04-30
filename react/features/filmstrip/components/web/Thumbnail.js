@@ -40,7 +40,6 @@ import logger from '../../logger';
 
 const JitsiTrackEvents = JitsiMeetJS.events.track;
 
-declare var APP: Object;
 declare var interfaceConfig: Object;
 
 /**
@@ -178,6 +177,11 @@ export type Props = {|
      * An object with information about the participant related to the thumbnaul.
      */
     _participant: Object,
+
+    /**
+     * An object with information about the participant related to the thumbnaul.
+     */
+     _participants: Object[],
 
     /**
      * The number of participants in the call.
@@ -589,7 +593,7 @@ class Thumbnail extends Component<Props, State> {
      * @private
      */
      _updateFirst() {
-        const raisedFirst = APP.store.getState()['features/base/participants'].filter((p) => p && p.raisedHandAt).sort((a, b) => {
+        const raisedFirst = this.props._participants.filter((p) => p && p.raisedHandAt).sort((a, b) => {
             if (a.raisedHandAt < b.raisedHandAt) {
                 return -1;
             }
@@ -636,8 +640,6 @@ class Thumbnail extends Component<Props, State> {
             statsPopoverPosition = 'auto';
             tooltipPosition = 'top';
         }
-
-        if (raisedFirst) console.log(APP.store.getState()['features/base/participants'], raisedFirst, id, raisedFirst.raisedHandAt);
 
         return (
             <div>
@@ -1054,6 +1056,7 @@ function _mapStateToProps(state, ownProps): Object {
         _indicatorIconSize: NORMAL,
         _localFlipX: Boolean(localFlipX),
         _participant: participant,
+        _participants: state['features/base/participants'],
         _participantCount: getParticipantCount(state),
         _startSilent: Boolean(startSilent),
         _videoTrack,

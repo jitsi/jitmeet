@@ -83,6 +83,20 @@ export const MeetingParticipantList = () => {
         lowerMenu();
     }, [ lowerMenu ]);
 
+    const isFirstRaisedHand = (id) => {
+        const first = [...participants].filter((p) => p.raisedHandAt).sort((a, b) => {
+            if (a.raisedHandAt < b.raisedHandAt) {
+                return -1;
+            }
+            if (a.raisedHandAt > b.raisedHandAt) {
+                return 1;
+            }
+            return 0;
+        })[0];
+
+        return first && first.id === id;
+    };
+
     return (
     <>
         <Heading>{t('participantsPane.headings.participantsList', { count: participants.length })}</Heading>
@@ -90,6 +104,7 @@ export const MeetingParticipantList = () => {
         <div>
             {participants.map(p => (
                 <MeetingParticipantItem
+                    isFirst = { isFirstRaisedHand(p.id) }
                     isHighlighted = { raiseContext.participant === p }
                     key = { p.id }
                     onContextMenu = { toggleMenu(p) }

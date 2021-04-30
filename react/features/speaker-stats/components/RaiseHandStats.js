@@ -3,13 +3,12 @@
 import React, { Component } from "react";
 
 import { translate } from "../../base/i18n";
-import { getLocalParticipant } from "../../base/participants";
-import { connect, toState } from "../../base/redux";
+import { getParticipants } from "../../base/participants";
+import { connect } from "../../base/redux";
 
 import SpeakerStatsItem from "./SpeakerStatsItem";
 import SpeakerStatsLabels from "./SpeakerStatsLabels";
 
-declare var APP: Object;
 declare var interfaceConfig: Object;
 
 /**
@@ -21,6 +20,11 @@ type Props = {
      * The JitsiConference from which stats will be pulled.
      */
     conference: Object,
+
+    /**
+     * The JitsiConference from which stats will be pulled.
+     */
+    _participants: Object[],
 
     /**
      * The function to translate human-readable text.
@@ -56,7 +60,7 @@ class RaiseHandStats extends Component<Props, State> {
         super(props);
 
         this.state = {
-            participants: APP.store.getState()['features/base/participants']
+            participants: props._participants
         };
 
         // Bind event handlers so they are only bound once per instance.
@@ -89,7 +93,7 @@ class RaiseHandStats extends Component<Props, State> {
      * @returns {ReactElement}
      */
     render() {
-        const items = this.state.participants.filter((p) => p.raisedHand).sort((a, b) => {
+        const items = this.state.participants.filter((p) => p.raisedHandAt).sort((a, b) => {
             if (a.raisedHandAt < b.raisedHandAt) {
                 return -1;
             }
@@ -149,14 +153,14 @@ class RaiseHandStats extends Component<Props, State> {
      * @private
      */
     _updateStats() {
-        const participants = APP.store.getState()['features/base/participants'];
+        const participants = this.props._participants;
 
         this.setState({ participants });
     }
 }
 
 /**
- * Maps (parts of) the redux state to the associated RaiseHandStats's props.
+ * Maps (parts of) the redux state to the associated SpeakerStats's props.
  *
  * @param {Object} state - The redux state.
  * @private
@@ -164,5 +168,16 @@ class RaiseHandStats extends Component<Props, State> {
  *     _localDisplayName: ?string
  * }}
  */
+function _mapStateToProps(state) {
+    return {
+        /**
+         * The local display name.
+         *
+         * @private
+         * @type {string|undefined}
+         */
+        _participants: getParticipants(state)
+    };
+}
 
-export default translate(RaiseHandStats);
+export default translate(connect(_mapStateToProps)(RaiseHandStats));

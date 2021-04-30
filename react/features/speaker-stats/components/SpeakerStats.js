@@ -4,7 +4,7 @@ import React, { Component } from "react";
 
 import { translate } from "../../base/i18n";
 import { getLocalParticipant } from "../../base/participants";
-import { connect, toState } from "../../base/redux";
+import { connect } from "../../base/redux";
 
 import SpeakerStatsItem from "./SpeakerStatsItem";
 import SpeakerStatsLabels from "./SpeakerStatsLabels";

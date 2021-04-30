@@ -17,6 +17,7 @@ import {
 import { Container } from '../../../base/react';
 import { connect } from '../../../base/redux';
 import { StyleType } from '../../../base/styles';
+import { getParticipants } from "../../../base/participants";
 import { getTrackByMediaTypeAndParticipant } from '../../../base/tracks';
 import { ConnectionIndicator } from '../../../connection-indicator';
 import { DisplayNameLabel } from '../../../display-name';
@@ -31,8 +32,6 @@ import RaisedHandIndicator from './RaisedHandIndicator';
 import ScreenShareIndicator from './ScreenShareIndicator';
 import VideoMutedIndicator from './VideoMutedIndicator';
 import styles, { AVATAR_SIZE } from './styles';
-
-declare var APP: Object;
 
 /**
  * Thumbnail component's property types.
@@ -97,6 +96,11 @@ type Props = {
     participant: Object,
 
     /**
+     * The Redux representation of the participant to display.
+     */
+     participants: Object[],
+
+    /**
      * Whether to display or hide the display name of the participant in the thumbnail.
      */
     renderDisplayName: ?boolean,
@@ -143,7 +147,7 @@ function Thumbnail(props: Props) {
 
     useEffect(() => {
         const updateFirst = setInterval(() => {
-            const first = APP.store.getState()['features/base/participants'].filter((p) => p && p.raisedHandAt).sort((a, b) => {
+            const first = props._participants.filter((p) => p && p.raisedHandAt).sort((a, b) => {
                 if (a.raisedHandAt < b.raisedHandAt) {
                     return -1;
                 }
@@ -155,6 +159,8 @@ function Thumbnail(props: Props) {
 
             setRaisedFirst(first);
         }, 1000);
+
+        return () => clearInterval(updateFirst);
     }, []);
 
     return (
@@ -296,6 +302,7 @@ function _mapStateToProps(state, ownProps) {
         _renderDominantSpeakerIndicator: renderDominantSpeakerIndicator,
         _renderModeratorIndicator: renderModeratorIndicator,
         _styles: ColorSchemeRegistry.get(state, 'Thumbnail'),
+        _participants: getParticipants(state),
         _videoTrack: videoTrack
     };
 }
