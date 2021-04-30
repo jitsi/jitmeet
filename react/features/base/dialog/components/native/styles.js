@@ -82,12 +82,12 @@ export const brandedDialog = {
     closeWrapper: {
         padding: BoxModel.padding
     },
-    
+
     dialogTitle: {
         fontWeight: 'bold',
         paddingLeft: BoxModel.padding * 2
     },
-    
+
     headerWrapper: {
         alignItems: 'center',
         flexDirection: 'row',
