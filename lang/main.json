@@ -607,7 +607,8 @@
             "vote_plural" : "{{count}} votes"
         },
         "chat": {
-            "notice": "Poll"
+            "notice": "Poll",
+            "details": "Details"
         }
     },
     "poweredby": "powered by",
