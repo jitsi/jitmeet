@@ -36,6 +36,7 @@ import '../lobby/middleware';
 import '../notifications/middleware';
 import '../overlay/middleware';
 import '../polls/middleware';
+import '../polls/subscriber';
 import '../recent-list/middleware';
 import '../recording/middleware';
 import '../rejoin/middleware';
