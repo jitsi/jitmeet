@@ -3,6 +3,7 @@
 import InlineDialog from '@atlaskit/inline-dialog';
 import React from 'react';
 
+import { areAudioLevelsEnabled } from '../../../../base/config/functions';
 import {
     getAudioInputDeviceData,
     getAudioOutputDeviceData,
@@ -52,7 +53,8 @@ function AudioSettingsPopup({
     setAudioInputDevice,
     setAudioOutputDevice,
     onClose,
-    outputDevices
+    outputDevices,
+    measureAudioLevels
 }: Props) {
     return (
         <div className = 'audio-preview'>
@@ -60,6 +62,7 @@ function AudioSettingsPopup({
                 content = { <AudioSettingsContent
                     currentMicDeviceId = { currentMicDeviceId }
                     currentOutputDeviceId = { currentOutputDeviceId }
+                    measureAudioLevels = { measureAudioLevels }
                     microphoneDevices = { microphoneDevices }
                     outputDevices = { outputDevices }
                     setAudioInputDevice = { setAudioInputDevice }
@@ -85,7 +88,8 @@ function mapStateToProps(state) {
         currentOutputDeviceId: getCurrentOutputDeviceId(state),
         isOpen: getAudioSettingsVisibility(state),
         microphoneDevices: getAudioInputDeviceData(state),
-        outputDevices: getAudioOutputDeviceData(state)
+        outputDevices: getAudioOutputDeviceData(state),
+        measureAudioLevels: areAudioLevelsEnabled(state)
     };
 }
 

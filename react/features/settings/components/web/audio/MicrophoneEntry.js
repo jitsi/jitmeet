@@ -30,6 +30,11 @@ type Props = AudioSettingsEntryProps & {
      * Click handler for component.
      */
     onClick: Function,
+
+    /**
+    * Used to decide whether to listen to audio level changes.
+    */
+    measureAudioLevels: boolean,
 }
 
 type State = {
@@ -94,9 +99,9 @@ export default class MicrophoneEntry extends Component<Props, State> {
      * @returns {void}
      */
     _startListening() {
-        const { jitsiTrack } = this.props;
+        const { jitsiTrack, measureAudioLevels } = this.props;
 
-        jitsiTrack && jitsiTrack.on(
+        jitsiTrack && measureAudioLevels && jitsiTrack.on(
             JitsiTrackEvents.TRACK_AUDIO_LEVEL_CHANGED,
             this._updateLevel);
     }
@@ -150,7 +155,7 @@ export default class MicrophoneEntry extends Component<Props, State> {
      * @inheritdoc
      */
     render() {
-        const { children, hasError, isSelected, jitsiTrack } = this.props;
+        const { children, hasError, isSelected, jitsiTrack, measureAudioLevels } = this.props;
 
         return (
             <div
@@ -161,7 +166,7 @@ export default class MicrophoneEntry extends Component<Props, State> {
                     isSelected = { isSelected }>
                     {children}
                 </AudioSettingsEntry>
-                { Boolean(jitsiTrack) && <Meter
+                { Boolean(jitsiTrack) && measureAudioLevels && <Meter
                     className = 'audio-preview-meter-mic'
                     isDisabled = { hasError }
                     level = { this.state.level } />
