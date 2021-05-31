@@ -19,9 +19,10 @@ import {
 import { MiddlewareRegistry, StateListenerRegistry } from '../base/redux';
 import { playSound, registerSound, unregisterSound } from '../base/sounds';
 import { openDisplayNamePrompt } from '../display-name';
+import { closePollTab } from '../polls/actions';
 import { showToolbox } from '../toolbox/actions';
 
-import { ADD_MESSAGE, SEND_MESSAGE, OPEN_CHAT, CLOSE_CHAT } from './actionTypes';
+import { ADD_MESSAGE, SEND_MESSAGE, OPEN_CHAT, CLOSE_CHAT, SET_IS_POLL_TAB_FOCUSED } from './actionTypes';
 import { addMessage, clearMessages } from './actions';
 import { closeChat } from './actions.any';
 import { ChatPrivacyDialog } from './components';
@@ -100,15 +101,27 @@ MiddlewareRegistry.register(store => next => action => {
         }
         break;
 
-    case CLOSE_CHAT:
+    case CLOSE_CHAT: {
+        const isPollTabOpen = getState()['features/chat'].isPollsTabFocused;
+
         unreadCount = 0;
 
         if (typeof APP !== 'undefined') {
             APP.API.notifyChatUpdated(unreadCount, false);
         }
 
+        if (isPollTabOpen) {
+            dispatch(closePollTab());
+        }
+
         dispatch(setActiveModalId());
         break;
+    }
+
+    case SET_IS_POLL_TAB_FOCUSED: {
+        dispatch(closePollTab());
+        break;
+    }
 
     case SEND_MESSAGE: {
         const state = store.getState();
