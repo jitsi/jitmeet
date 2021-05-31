@@ -12,7 +12,6 @@ import { StyleType } from '../../../base/styles';
 import { SharedDocumentButton } from '../../../etherpad';
 import { InviteButton } from '../../../invite';
 import { AudioRouteButton } from '../../../mobile/audio-mode';
-import { PollCreateButton } from '../../../polls/components';
 import { LiveStreamButton, RecordButton } from '../../../recording';
 import SecurityDialogButton from '../../../security/components/security-dialog/SecurityDialogButton';
 import { SharedVideoButton } from '../../../shared-video/components';
@@ -140,7 +139,6 @@ class OverflowMenu extends PureComponent<Props, State> {
                 {!toolbarButtons.has('invite') && <InviteButton { ...buttonProps } />}
                 <AudioOnlyButton { ...buttonProps } />
                 {!toolbarButtons.has('raisehand') && <RaiseHandButton { ...buttonProps } />}
-                <PollCreateButton { ...buttonProps } />
                 <SecurityDialogButton { ...buttonProps } />
                 <ScreenSharingButton { ...buttonProps } />
                 <MoreOptionsButton { ...moreOptionsButtonProps } />

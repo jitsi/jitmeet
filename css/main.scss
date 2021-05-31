@@ -40,7 +40,6 @@ $flagsImagePath: "../images/";
 @import 'modals/embed-meeting/embed-meeting';
 @import 'modals/feedback/feedback';
 @import 'modals/invite/info';
-@import 'modals/polls/polls';
 @import 'modals/settings/settings';
 @import 'modals/speaker_stats/speaker_stats';
 @import 'modals/video-quality/video-quality';
@@ -106,5 +105,6 @@ $flagsImagePath: "../images/";
 @import 'drawer';
 @import 'participants-pane';
 @import 'plan-limit';
+@import 'polls';
 
 /* Modules END */
