@@ -44,6 +44,7 @@ const commands = {
     sendEndpointTextMessage: 'send-endpoint-text-message',
     sendTones: 'send-tones',
     setLargeVideoParticipant: 'set-large-video-participant',
+    setParticipantVolume: 'set-participant-volume',
     setTileView: 'set-tile-view',
     setVideoQuality: 'set-video-quality',
     startRecording: 'start-recording',

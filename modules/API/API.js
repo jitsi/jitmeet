@@ -21,7 +21,8 @@ import {
     getParticipantById,
     participantUpdated,
     pinParticipant,
-    kickParticipant
+    kickParticipant,
+    setParticipantVolume
 } from '../../react/features/base/participants';
 import { updateSettings } from '../../react/features/base/settings';
 import { isToggleCameraEnabled, toggleCamera } from '../../react/features/base/tracks';
@@ -152,6 +153,9 @@ function initCommands() {
             logger.debug('Set large video participant command received');
             sendAnalytics(createApiEvent('largevideo.participant.set'));
             APP.store.dispatch(selectParticipantInLargeVideo(participantId));
+        },
+        'set-participant-volume': (participantId, volume) => {
+            APP.store.dispatch(setParticipantVolume(participantId, volume));
         },
         'subject': subject => {
             sendAnalytics(createApiEvent('subject.changed'));
