@@ -9,7 +9,8 @@ import {
     PARTICIPANT_LEFT,
     PARTICIPANT_UPDATED,
     PIN_PARTICIPANT,
-    SET_LOADABLE_AVATAR_URL
+    SET_LOADABLE_AVATAR_URL,
+    SET_PARTICIPANT_VOLUME
 } from './actionTypes';
 import { LOCAL_PARTICIPANT_DEFAULT_ID, PARTICIPANT_ROLE } from './constants';
 
@@ -25,6 +26,7 @@ import { LOCAL_PARTICIPANT_DEFAULT_ID, PARTICIPANT_ROLE } from './constants';
  * "PINNED_ENDPOINT".
  * @property {boolean} dominantSpeaker - If this participant is the dominant
  * speaker in the (associated) conference, {@code true}; otherwise,
+ * @property {number} volume - Volume of this participant.
  * {@code false}.
  * @property {string} email - Participant email.
  */
@@ -69,6 +71,7 @@ ReducerRegistry.register('features/base/participants', (state = [], action) => {
     case PARTICIPANT_ID_CHANGED:
     case PARTICIPANT_UPDATED:
     case PIN_PARTICIPANT:
+    case SET_PARTICIPANT_VOLUME:
         return state.map(p => _participant(p, action));
 
     case PARTICIPANT_JOINED:
@@ -162,6 +165,19 @@ function _participant(state: Object = {}, action) {
     case PIN_PARTICIPANT:
         // Currently, only one pinned participant is allowed.
         return set(state, 'pinned', state.id === action.participant.id);
+
+    case SET_PARTICIPANT_VOLUME: {
+        const { participant } = action;
+
+        if (state.id === participant.id) {
+            const newState = { ...state };
+
+            newState.volume = participant.volume;
+
+            return newState;
+        }
+        break;
+    }
     }
 
     return state;
@@ -224,6 +240,7 @@ function _participantJoined({ participant }) {
         name,
         pinned: pinned || false,
         presence,
-        role: role || PARTICIPANT_ROLE.NONE
+        role: role || PARTICIPANT_ROLE.NONE,
+        volume: undefined
     };
 }

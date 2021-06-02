@@ -12,7 +12,8 @@ import {
     getLocalParticipant,
     getParticipantById,
     getParticipantCount,
-    pinParticipant
+    pinParticipant,
+    setParticipantVolume
 } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import { isTestModeEnabled } from '../../../base/testing';
@@ -65,12 +66,7 @@ export type State = {|
     /**
      * Indicates whether the thumbnail is hovered or not.
      */
-    isHovered: boolean,
-
-    /**
-     * The current volume setting for the Thumbnail.
-     */
-    volume: ?number
+    isHovered: boolean
 |};
 
 /**
@@ -188,6 +184,11 @@ export type Props = {|
      */
     _startSilent: Boolean,
 
+    /**
+     * Volume of the participant.
+     */
+    _volume: number,
+
      /**
      * The video track that will be displayed in the thumbnail.
      */
@@ -240,7 +241,6 @@ class Thumbnail extends Component<Props, State> {
             audioLevel: 0,
             canPlayEventReceived: false,
             isHovered: false,
-            volume: undefined,
             displayMode: DISPLAY_VIDEO
         };
 
@@ -797,10 +797,11 @@ class Thumbnail extends Component<Props, State> {
             _isTestModeEnabled,
             _participant,
             _startSilent,
-            _videoTrack
+            _videoTrack,
+            _volume
         } = this.props;
         const { id } = _participant;
-        const { audioLevel, canPlayEventReceived, volume } = this.state;
+        const { audioLevel, canPlayEventReceived } = this.state;
         const styles = this._getStyles();
         const containerClassName = this._getContainerClassName();
 
@@ -846,7 +847,7 @@ class Thumbnail extends Component<Props, State> {
                         id = { `remoteAudio_${audioTrackId || ''}` }
                         muted = { _startSilent }
                         onInitialVolumeSet = { this._onInitialVolumeSet }
-                        volume = { volume } />
+                        volume = { _volume } />
                 }
                 <div className = 'videocontainer__background' />
                 <div className = 'videocontainer__toptoolbar'>
@@ -869,7 +870,7 @@ class Thumbnail extends Component<Props, State> {
                 </div>
                 <span className = 'remotevideomenu'>
                     <RemoteVideoMenuTriggerButton
-                        initialVolumeValue = { volume }
+                        initialVolumeValue = { _volume }
                         onVolumeChange = { onVolumeChange }
                         participantID = { id } />
                 </span>
@@ -889,8 +890,10 @@ class Thumbnail extends Component<Props, State> {
      * @returns {void}
      */
     _onInitialVolumeSet(volume) {
-        if (this.state.volume !== volume) {
-            this.setState({ volume });
+        const { _volume, dispatch, participantID } = this.props;
+
+        if (_volume !== volume) {
+            dispatch(setParticipantVolume(participantID, volume));
         }
     }
 
@@ -903,7 +906,9 @@ class Thumbnail extends Component<Props, State> {
      * @returns {void}
      */
     _onVolumeChange(value) {
-        this.setState({ volume: value });
+        const { dispatch, participantID } = this.props;
+
+        dispatch(setParticipantVolume(participantID, value));
     }
 
     /**
@@ -1022,6 +1027,7 @@ function _mapStateToProps(state, ownProps): Object {
         _participant: participant,
         _participantCount: getParticipantCount(state),
         _startSilent: Boolean(startSilent),
+        _volume: participant.volume,
         _videoTrack,
         ...size
     };

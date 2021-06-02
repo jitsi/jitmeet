@@ -171,3 +171,16 @@ export const HIDDEN_PARTICIPANT_LEFT = 'HIDDEN_PARTICIPANT_LEFT';
  */
 export const SET_LOADABLE_AVATAR_URL = 'SET_LOADABLE_AVATAR_URL';
 
+/**
+ * Action to handle participant volume.
+ *
+ * {
+ *     type: SET_PARTICIPANT_VOLUME,
+ *     participant: {
+ *         id: string,
+ *         volume: number
+ *     }
+ * }
+ */
+export const SET_PARTICIPANT_VOLUME = 'SET_PARTICIPANT_VOLUME';
+
