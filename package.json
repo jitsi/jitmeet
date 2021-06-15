@@ -53,6 +53,7 @@
     "jitsi-meet-logger": "github:jitsi/jitsi-meet-logger#v1.0.0",
     "jquery": "3.5.1",
     "jquery-i18next": "1.2.1",
+    "jQuery-Impromptu": "github:trentrichardson/jQuery-Impromptu#v6.0.0",
     "js-md5": "0.6.1",
     "jwt-decode": "2.2.0",
     "lib-jitsi-meet": "github:jitsi/lib-jitsi-meet#fad985e95a9e8a4fb8a1b8b1ad2cfef75370c866",
@@ -87,7 +88,7 @@
     "react-native-svg-transformer": "0.14.3",
     "react-native-url-polyfill": "1.2.0",
     "react-native-watch-connectivity": "0.4.3",
-    "react-native-webrtc": "github:react-native-webrtc/react-native-webrtc#510d20dd62c1768885a98f36fde83f9e48a723fa",
+    "react-native-webrtc": "github:mickyarun/react-native-webrtc#7b1b0a81407ae349b6ca5b9cb4324784881f1e58",
     "react-native-webview": "11.0.2",
     "react-native-youtube-iframe": "1.2.3",
     "react-redux": "7.1.0",
@@ -158,6 +159,7 @@
     "validate": "npm ls",
     "start": "make dev",
     "ios": "react-native run-ios",
-    "android": "react-native run-android"
+    "android": "react-native run-android",
+    "android-dev": "adb reverse tcp:8081 tcp:8081 && react-native run-android"
   }
 }

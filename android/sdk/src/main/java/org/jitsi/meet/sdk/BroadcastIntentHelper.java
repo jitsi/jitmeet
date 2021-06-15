@@ -9,6 +9,10 @@ public class BroadcastIntentHelper {
         return intent;
     }
 
+    public static Intent buildToggleCameraIntent() {
+        return new Intent(BroadcastAction.Type.TOGGLE_CAMERA_FACING_MODE.getAction());
+    }
+
     public static Intent buildHangUpIntent() {
         return new Intent(BroadcastAction.Type.HANG_UP.getAction());
     }
