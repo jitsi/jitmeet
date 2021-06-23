@@ -22,7 +22,8 @@ import {
     PARTICIPANT_DISPLAY_NAME_CHANGED,
     PARTICIPANT_JOINED,
     PARTICIPANT_LEFT,
-    PARTICIPANT_UPDATED
+    PARTICIPANT_UPDATED,
+    SET_PARTICIPANT_VOLUME
 } from './actionTypes';
 import {
     localParticipantIdChanged,
@@ -144,6 +145,17 @@ MiddlewareRegistry.register(store => next => action => {
     case PARTICIPANT_UPDATED:
         return _participantJoinedOrUpdated(store, next, action);
 
+    case SET_PARTICIPANT_VOLUME: {
+        const { volume } = action.participant;
+
+        if (volume < 0) {
+            action.participant.volume = 0;
+        } else if (volume > 1) {
+            action.participant.volume = 1;
+        }
+
+        break;
+    }
     }
 
     return next(action);

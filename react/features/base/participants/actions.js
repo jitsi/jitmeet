@@ -14,7 +14,8 @@ import {
     PARTICIPANT_LEFT,
     PARTICIPANT_UPDATED,
     PIN_PARTICIPANT,
-    SET_LOADABLE_AVATAR_URL
+    SET_LOADABLE_AVATAR_URL,
+    SET_PARTICIPANT_VOLUME
 } from './actionTypes';
 import {
     DISCO_REMOTE_CONTROL_FEATURE
@@ -555,3 +556,25 @@ export function setLoadableAvatarUrl(participantId, url) {
     };
 }
 
+/**
+ * Action that changes participants volume.
+ *
+ * @param {string} participantId - The ID of the participant.
+ * @param {number} volume - The new volume.
+ * @returns {{
+ *     type: SET_PARTICIPANT_VOLUME,
+ *     participant: {
+ *         id: string,
+ *         volume: number
+ *     }
+ * }}
+*/
+export function setParticipantVolume(participantId, volume) {
+    return {
+        type: SET_PARTICIPANT_VOLUME,
+        participant: {
+            id: participantId,
+            volume
+        }
+    };
+}
