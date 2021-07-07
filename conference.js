@@ -177,7 +177,8 @@ const commands = {
     AVATAR_URL: AVATAR_URL_COMMAND,
     CUSTOM_ROLE: 'custom-role',
     EMAIL: EMAIL_COMMAND,
-    ETHERPAD: 'etherpad'
+    ETHERPAD: 'etherpad',
+    GENERICIFRAME: 'genericiframe'
 };
 
 /**
@@ -2211,8 +2212,17 @@ export default {
         room.addCommandListener(this.commands.defaults.ETHERPAD,
             ({ value }) => {
                 APP.UI.initEtherpad(value);
+                // TODO: Remove as soon as the one below works
+                APP.UI.initGenericIFrame();
             }
         );
+
+        room.addCommandListener(this.commands.defaults.GENERICIFRAME,
+            () => {
+                APP.UI.initGenericIFrame();
+            }
+        );
+
 
         APP.UI.addListener(UIEvents.EMAIL_CHANGED,
             this.changeLocalEmail.bind(this));

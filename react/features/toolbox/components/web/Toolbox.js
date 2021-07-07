@@ -40,6 +40,7 @@ import { isVpaasMeeting } from '../../../billing-counter/functions';
 import { ChatCounter, toggleChat } from '../../../chat';
 import { EmbedMeetingDialog } from '../../../embed-meeting';
 import { SharedDocumentButton } from '../../../etherpad';
+import { GenericIFrameButton } from '../../../genericiframe';
 import { openFeedbackDialog } from '../../../feedback';
 import { openKeyboardShortcutsDialog } from '../../../keyboard-shortcuts';
 import { LocalRecordingInfoDialog } from '../../../local-recording';
@@ -1086,6 +1087,10 @@ class Toolbox extends Component<Props> {
             this.props._shouldShowButton('etherpad')
                 && <SharedDocumentButton
                     key = 'etherpad'
+                    showLabel = { true } />,
+            this.props._shouldShowButton('genericiframe')
+                && <GenericIFrameButton
+                    key = 'genericiframe'
                     showLabel = { true } />,
             (this.props._shouldShowButton('select-background') || this.props._shouldShowButton('videobackgroundblur'))
                 && <VideoBackgroundButton

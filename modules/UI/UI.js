@@ -10,6 +10,7 @@ import { isMobileBrowser } from '../../react/features/base/environment/utils';
 import { setColorAlpha } from '../../react/features/base/util';
 import { setDocumentUrl } from '../../react/features/etherpad';
 import { setFilmstripVisible } from '../../react/features/filmstrip';
+import { setGenericIFrameUrl } from '../../react/features/genericiframe';
 import { joinLeaveNotificationsDisabled, setNotificationsEnabled } from '../../react/features/notifications';
 import {
     dockToolbox,
@@ -19,6 +20,7 @@ import {
 import UIEvents from '../../service/UI/UIEvents';
 
 import EtherpadManager from './etherpad/Etherpad';
+import GenericIFrameManager from './genericiframe/GenericIFrame';
 import messageHandler from './util/MessageHandler';
 import UIUtil from './util/UIUtil';
 import VideoLayout from './videolayout/VideoLayout';
@@ -32,11 +34,15 @@ const eventEmitter = new EventEmitter();
 UI.eventEmitter = eventEmitter;
 
 let etherpadManager;
+let genericIFrameManager;
 
 const UIListeners = new Map([
     [
         UIEvents.ETHERPAD_CLICKED,
         () => etherpadManager && etherpadManager.toggleEtherpad()
+    ], [
+        UIEvents.GENERICIFRAME_CLICKED,
+        () => genericIFrameManager && genericIFrameManager.toggleGenericIFrame()
     ], [
         UIEvents.TOGGLE_FILMSTRIP,
         () => UI.toggleFilmstrip()
@@ -183,6 +189,27 @@ UI.initEtherpad = name => {
  * @return {EtherpadManager} the shared document manager object
  */
 UI.getSharedDocumentManager = () => etherpadManager;
+
+/**
+ * Setup and show GenericIFrame.
+ * @param {string} name genericIFrame id
+ */
+UI.initGenericIFrame = () => {
+    if (genericIFrameManager || !config.genericIFrameTemplateUrl) {
+        return;
+    }
+    logger.log('GenericIFrame is enabled');
+
+    genericIFrameManager = new GenericIFrameManager(eventEmitter);
+
+    APP.store.dispatch(setGenericIFrameUrl(config.genericIFrameTemplateUrl.toString()));
+};
+
+/**
+ * Returns the shared document manager object.
+ * @return {GenericIFrameManager} the shared document manager object
+ */
+UI.getGenericIFrameManager = () => genericIFrameManager;
 
 /**
  * Show user on UI.
