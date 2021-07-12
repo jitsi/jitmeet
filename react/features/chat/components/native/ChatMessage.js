@@ -154,6 +154,7 @@ class ChatMessage extends AbstractChatMessage<Props> {
         );
     }
 
+
     /**
      * Renders the private reply button, if necessary.
      *
